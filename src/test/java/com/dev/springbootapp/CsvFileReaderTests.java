@@ -3,16 +3,20 @@ package com.dev.springbootapp;
 import com.dev.springbootapp.service.CsvFileReaderService;
 import com.dev.springbootapp.service.impl.CsvFileReaderServiceImpl;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;;
 
 
 public class CsvFileReaderTests {
+    private final String filePath = "src/test/java/com/dev/springbootapp/filetest/";
     private final CsvFileReaderService csvFileReaderService;
+    private final List<List<String>> emptyList;
 
     public CsvFileReaderTests() {
         this.csvFileReaderService = new CsvFileReaderServiceImpl();
+        this.emptyList = new ArrayList<>();
     }
 
     @Test
@@ -36,59 +40,39 @@ public class CsvFileReaderTests {
     }
 
     @Test
-    public void isListHasCorrectLengthInMethodRead() {
-        List<List<String>> row = null;
-        int randomNum = getRandomRow(
-                "src/test/java/com/dev/springbootapp/filetest/test1.csv");
+    public void isMethodReadNotReturnEmptyListIfFileIsNotEmpty() {
+        List<List<String>> rows = null;
         try {
-            row = csvFileReaderService
-                    .read("src/test/java/com/dev/springbootapp/filetest/test1.csv");
+            rows = csvFileReaderService
+                    .read( filePath + "test1.csv");
         } catch (IOException e) {
             e.getMessage();
         }
-        Assertions.assertEquals(10, row.get(randomNum).size());
-
+        Assertions.assertNotEquals(emptyList, rows);
     }
 
     @Test
-    public void isListHasCorrectLengthInMethodReadWithAmount() {
+    public void isMethodReadWithSpecialAmountNotReturnEmptyListIfFileIsNotEmpty() {
         List<List<String>> rows = null;
         try {
-            rows = csvFileReaderService.read(
-                    "src/test/java/com/dev/springbootapp/filetest/test2.csv",
-                    10);
+            rows = csvFileReaderService.read(filePath + "test2.csv",
+                    5);
         } catch (IOException e) {
             e.getMessage();
         }
-        Assertions.assertEquals(10, rows.get(getRandomRow(rows)).size());
+        Assertions.assertNotEquals(emptyList, rows);
     }
 
     @Test
-    public void isListHasCorrectLengthInMethodReadWithSpecialStarting() {
+    public void isMethodReadWithSpecialStartingNotReturnEmptyListIfFileIsNotEmpty() {
         List<List<String>> rows = null;
         try {
             rows = csvFileReaderService.read(
-                    "src/test/java/com/dev/springbootapp/filetest/test3.csv",
+                     filePath + "test3.csv",
                     10, 10);
         } catch (IOException e) {
             e.getMessage();
         }
-        Assertions.assertEquals(10, rows.get(getRandomRow(rows)).size());
-    }
-
-    private int getRandomRow(List<?> list) {
-        return (int) (Math.random()
-                * (list.size()));
-    }
-
-    private int getRandomRow(String filePath) {
-        try {
-            return  (int) (Math.random() * (csvFileReaderService
-                    .read(filePath)
-                    .size()));
-        } catch (IOException e) {
-            e.getMessage();
-        }
-        return 0;
+        Assertions.assertNotEquals(emptyList, rows);
     }
 }

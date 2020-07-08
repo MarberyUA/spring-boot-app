@@ -17,10 +17,6 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
         try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath));) {
             String row;
             while ((row = csvReader.readLine()) != null) {
-                if (row.split(",").length > 10) {
-                    list.add(checkIfRowLengthMoreThenTen(row));
-                    continue;
-                }
                 list.add(List.of(row.split(",")));
             }
         } catch (IOException e) {
@@ -37,10 +33,6 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
             while ((row = csvReader.readLine()) != null) {
                 if (list.size() == amount) {
                     break;
-                }
-                if (row.split(",").length > 10) {
-                    list.add(checkIfRowLengthMoreThenTen(row));
-                    continue;
                 }
                 list.add(List.of(row.split(",")));
             }
@@ -61,10 +53,6 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
                 }
                 startsFrom--;
                 if (startsFrom == 0) {
-                    if (row.split(",").length > 10) {
-                        list.add(checkIfRowLengthMoreThenTen(row));
-                        continue;
-                    }
                     list.add(List.of(row.split(",")));
                 }
             }
@@ -72,20 +60,5 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
             throw e;
         }
         return list;
-    }
-
-    private List<String> checkIfRowLengthMoreThenTen(String row) {
-        String[] splitRow = row.split(",");
-        List<String> listRow = new ArrayList<>();
-        StringBuilder correctRow = new StringBuilder();
-        for (int i = 0; i < splitRow.length; i++) {
-            if (i >= 9) {
-                correctRow.append(splitRow[i]);
-                continue;
-            }
-            listRow.add(splitRow[i]);
-        }
-        listRow.add(correctRow.toString());
-        return listRow;
     }
 }
