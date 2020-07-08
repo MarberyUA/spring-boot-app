@@ -1,8 +1,8 @@
 package com.dev.springbootapp;
 
+import com.dev.springbootapp.exception.FileNotFoundException;
 import com.dev.springbootapp.service.CsvFileReaderService;
 import com.dev.springbootapp.service.impl.CsvFileReaderServiceImpl;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -12,67 +12,47 @@ import org.junit.jupiter.api.Test;;
 public class CsvFileReaderTests {
     private final String filePath = "src/test/java/com/dev/springbootapp/filetest/";
     private final CsvFileReaderService csvFileReaderService;
-    private final List<List<String>> emptyList;
 
     public CsvFileReaderTests() {
         this.csvFileReaderService = new CsvFileReaderServiceImpl();
-        this.emptyList = new ArrayList<>();
     }
 
     @Test
-    public void isThrowAnErrorIfFileNotFoundInMethodRead() {
-        Assertions.assertThrows(IOException.class, () ->
+    public void checkFailedReadFromNotExistingFile() {
+        Assertions.assertThrows(FileNotFoundException.class, () ->
                 csvFileReaderService.read("dsadsadsa.csv"));
     }
 
     @Test
-    public void isThrowAnErrorIfFileNotFoundInMethodReadSpecificAmount() {
-        Assertions.assertThrows(IOException.class, () ->
-                csvFileReaderService.read("dsadsadsa.csv",
-                        10));
+    public void checkFailedReadWithSpecialAmountFromNotExistingFile() {
+        Assertions.assertThrows(FileNotFoundException.class, () ->
+                csvFileReaderService.read("dsadsadsa.csv", 10));
     }
 
     @Test
-    public void isThrowAnErrorIfFileNotFoundInMethodReadSpecificAmountStartsWith() {
-        Assertions.assertThrows(IOException.class, () ->
-                csvFileReaderService.read("dsadsadsa.csv",
-                        10, 10));
+    public void checkFailedReadWithSpecialStartAndAmountFromNotExistingFile() {
+        Assertions.assertThrows(FileNotFoundException.class, () ->
+                csvFileReaderService.read("dsadsadsa.csv", 10, 10));
     }
 
     @Test
-    public void isMethodReadNotReturnEmptyListIfFileIsNotEmpty() {
+    public void checkSuccessReadFromFile() {
         List<List<String>> rows = null;
-        try {
-            rows = csvFileReaderService
-                    .read( filePath + "test1.csv");
-        } catch (IOException e) {
-            e.getMessage();
-        }
-        Assertions.assertNotEquals(emptyList, rows);
+        rows = csvFileReaderService.read( filePath + "test1.csv");
+        Assertions.assertEquals(48, rows.size());
     }
 
     @Test
-    public void isMethodReadWithSpecialAmountNotReturnEmptyListIfFileIsNotEmpty() {
+    public void checkSuccessReadWithSpecialAmountFromFile() {
         List<List<String>> rows = null;
-        try {
-            rows = csvFileReaderService.read(filePath + "test2.csv",
-                    5);
-        } catch (IOException e) {
-            e.getMessage();
-        }
-        Assertions.assertNotEquals(emptyList, rows);
+        rows = csvFileReaderService.read(filePath + "test2.csv", 5);
+        Assertions.assertEquals(5, rows.size());
     }
 
     @Test
-    public void isMethodReadWithSpecialStartingNotReturnEmptyListIfFileIsNotEmpty() {
+    public void checkSuccessReadWithSpecialStartAndAmountFromFile() {
         List<List<String>> rows = null;
-        try {
-            rows = csvFileReaderService.read(
-                     filePath + "test3.csv",
-                    10, 10);
-        } catch (IOException e) {
-            e.getMessage();
-        }
-        Assertions.assertNotEquals(emptyList, rows);
+        rows = csvFileReaderService.read(filePath + "test3.csv", 10, 10);
+        Assertions.assertEquals(10, rows.size());
     }
 }

@@ -1,5 +1,6 @@
 package com.dev.springbootapp.service.impl;
 
+import com.dev.springbootapp.exception.FileNotFoundException;
 import com.dev.springbootapp.service.CsvFileReaderService;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class CsvFileReaderServiceImpl implements CsvFileReaderService {
 
     @Override
-    public List<List<String>> read(String filePath) throws IOException {
+    public List<List<String>> read(String filePath) {
         List<List<String>> list = new ArrayList<>();
         try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath));) {
             String row;
@@ -20,13 +21,14 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
                 list.add(List.of(row.split(",")));
             }
         } catch (IOException e) {
-            throw e;
+            throw new FileNotFoundException("File not found,"
+                    + " please check the pass to the file!", e);
         }
         return list;
     }
 
     @Override
-    public List<List<String>> read(String filePath, int amount) throws IOException {
+    public List<List<String>> read(String filePath, int amount) {
         List<List<String>> list = new ArrayList<>();
         try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath));) {
             String row;
@@ -37,13 +39,14 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
                 list.add(List.of(row.split(",")));
             }
         } catch (IOException e) {
-            throw e;
+            throw new FileNotFoundException("File not found,"
+                    + " please check the pass to the file!", e);
         }
         return list;
     }
 
     @Override
-    public List<List<String>> read(String filePath, int startsFrom, int amount) throws IOException {
+    public List<List<String>> read(String filePath, int startsFrom, int amount) {
         List<List<String>> list = new ArrayList<>();
         try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath));) {
             String row;
@@ -52,12 +55,13 @@ public class CsvFileReaderServiceImpl implements CsvFileReaderService {
                     break;
                 }
                 startsFrom--;
-                if (startsFrom == 0) {
+                if (startsFrom < 0) {
                     list.add(List.of(row.split(",")));
                 }
             }
         } catch (IOException e) {
-            throw e;
+            throw new FileNotFoundException("File not found,"
+                    + " please check the pass to the file!", e);
         }
         return list;
     }
